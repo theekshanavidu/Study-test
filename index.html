@@ -257,75 +257,75 @@ function renderLogin(){
   };
 
   /* ---------------- HANDLE REDIRECT RESULT ---------------- */
-  getRedirectResult(auth).then(async (result)=>{
-    if(!result) return;
+getRedirectResult(auth).then(async (result)=>{
+  const user = result?.user || auth.currentUser; // <-- redirect result නැත්නම් currentUser check කරන්න
+  if(!user) return;
 
-    const user = result.user;
-    const ref = doc(db,"users",user.uid);
-    const snap = await getDoc(ref);
+  const ref = doc(db,"users",user.uid);
+  const snap = await getDoc(ref);
 
-    if(snap.exists()){
-      // Existing user
+  if(snap.exists()){
+    // Existing user
+    currentUser = user;
+    renderHome();
+  }else{
+    // New user → complete profile
+    const completeProfile = document.getElementById("complete-profile");
+    const loginForm = document.getElementById("login-form");
+
+    loginForm.style.display = "none";
+    completeProfile.style.display = "block";
+
+    const displayName = user.displayName ? user.displayName.split(" ") : ["",""];
+
+    completeProfile.innerHTML = `
+      <h2 class="text-xl font-bold">Complete Your Profile</h2>
+
+      <input id="profile-firstName" class="input-field" placeholder="First Name" value="${displayName[0]}">
+      <input id="profile-lastName" class="input-field" placeholder="Last Name" value="${displayName[1]}">
+      <input id="profile-email" class="input-field" value="${user.email}" readonly>
+              
+      <label for="profile-birthday">Birthday</label>
+      <input id="profile-birthday" type="date" class="input-field">
+
+      <label for="profile-phone">Phone</label>
+      <input id="profile-phone" placeholder="Phone" class="input-field">
+
+      <label for="profile-school">School</label>
+      <input id="profile-school" placeholder="School" class="input-field">
+
+      <label for="profile-examYear">Exam Year</label>
+      <select id="profile-examYear" class="input-field">
+        <option>2026 A/L</option>
+        <option>2027 A/L</option>
+        <option>2028 A/L</option>
+      </select>
+
+      <button id="save-profile-btn" class="liquid-btn w-full">Save</button>
+    `;
+
+    document.getElementById("save-profile-btn").onclick = async ()=>{
+      const data = {
+        firstName: document.getElementById("profile-firstName").value.trim(),
+        lastName: document.getElementById("profile-lastName").value.trim(),
+        email: user.email,
+        birthday: document.getElementById("profile-birthday").value,
+        phone: document.getElementById("profile-phone").value.trim(),
+        school: document.getElementById("profile-school").value.trim(),
+        examYear: document.getElementById("profile-examYear").value,
+        createdAt: new Date().toISOString()
+      };
+
+      await setDoc(doc(db,"users",user.uid),data);
+      await updateProfile(user,{displayName:`${data.firstName} ${data.lastName}`});
+
       currentUser = user;
       renderHome();
-    }else{
-      // New user → complete profile
-      const completeProfile = document.getElementById("complete-profile");
-      const loginForm = document.getElementById("login-form");
-
-      loginForm.style.display = "none";
-      completeProfile.style.display = "block";
-
-      const displayName = user.displayName ? user.displayName.split(" ") : ["",""];
-
-      completeProfile.innerHTML = `
-        <h2 class="text-xl font-bold">Complete Your Profile</h2>
-
-        <input id="profile-firstName" class="input-field" placeholder="First Name" value="${displayName[0]}">
-        <input id="profile-lastName" class="input-field" placeholder="Last Name" value="${displayName[1]}">
-        <input id="profile-email" class="input-field" value="${user.email}" readonly>
-                
-        <label for="profile-birthday">Birthday</label>
-        <input id="profile-birthday" type="date" class="input-field">
-
-        <label for="profile-phone">Phone</label>
-        <input id="profile-phone" placeholder="Phone" class="input-field">
-
-        <label for="profile-school">School</label>
-        <input id="profile-school" placeholder="School" class="input-field">
-
-        <label for="profile-examYear">Exam Year</label>
-        <select id="profile-examYear" class="input-field">
-          <option>2026 A/L</option>
-          <option>2027 A/L</option>
-          <option>2028 A/L</option>
-        </select>
-
-        <button id="save-profile-btn" class="liquid-btn w-full">Save</button>
-      `;
-
-      document.getElementById("save-profile-btn").onclick = async ()=>{
-        const data = {
-          firstName: document.getElementById("profile-firstName").value.trim(),
-          lastName: document.getElementById("profile-lastName").value.trim(),
-          email: user.email,
-          birthday: document.getElementById("profile-birthday").value,
-          phone: document.getElementById("profile-phone").value.trim(),
-          school: document.getElementById("profile-school").value.trim(),
-          examYear: document.getElementById("profile-examYear").value,
-          createdAt: new Date().toISOString()
-        };
-
-        await setDoc(doc(db,"users",user.uid),data);
-        await updateProfile(user,{displayName:`${data.firstName} ${data.lastName}`});
-
-        currentUser = user;
-        renderHome();
-      };
-    }
-  }).catch(err=>{
-    alert(err.message);
-  });
+    };
+  }
+}).catch(err=>{
+  alert(err.message);
+});
 }
 
 
