@@ -194,76 +194,90 @@ function renderRegister(){
 
 
 
+
 // ---------- Login ----------
-async function renderLogin() {
+function renderLogin(){
   appContainer.innerHTML = `
-    <div id="auth-section" class="bg-slate-800 p-6 rounded-xl w-full max-w-md mx-auto space-y-3">
-      <h2 class="text-2xl font-bold">Login</h2>
-      <form id="login-form" class="flex flex-col gap-2">
-        <input type="email" name="email" placeholder="Email" class="input-field" required>
-        <input type="password" name="password" placeholder="Password" class="input-field" required>
-        <div class="flex justify-between items-center mt-2">
-          <button type="submit" class="liquid-btn">Login</button>
-          <button type="button" id="forgot-pass" class="text-sm text-slate-300">Forgot?</button>
-        </div>
-        <div id="login-error" class="text-red-400"></div>
-      </form>
-      <button id="google-login" class="google-btn w-full">
-        <img src="https://img.freepik.com/premium-vector/google-logo-icon-transparent-background_1273375-1570.jpg" class="google-logo">
-        Continue with Google
-      </button>
-      <div id="complete-profile" style="display:none" class="mt-4 space-y-2"></div>
-    </div>`;
+  <div id="auth-section" class="bg-slate-800 p-6 rounded-xl w-full max-w-md mx-auto space-y-3">
+  
+  <h2 class="text-2xl font-bold">Login</h2>
 
-  const loginForm = document.getElementById('login-form');
+  <form id="login-form" class="flex flex-col gap-2">
+    <input type="email" name="email" placeholder="Email" class="input-field" required>
+    <input type="password" name="password" placeholder="Password" class="input-field" required>
 
-  loginForm.onsubmit = async e => {
-    e.preventDefault();
-    const f = e.target;
-    try {
-      const cred = await signInWithEmailAndPassword(auth, f.email.value, f.password.value);
-      currentUser = cred.user;
-      renderHeader();
-      renderHome();
-    } catch (err) {
-      document.getElementById('login-error').textContent = err.message;
-    }
-  };
+    <div class="flex justify-between items-center mt-2">
+      <button type="submit" class="liquid-btn">Login</button>
+      <button type="button" id="forgot-pass" class="text-sm text-slate-300">Forgot?</button>
+    </div>
+
+    <div id="login-error" class="text-red-400"></div>
+  </form>
+    <button id="google-login" class="google-btn">
+  <img src="https://img.freepik.com/premium-vector/google-logo-icon-transparent-background_1273375-1570.jpg?semt=ais_hybrid&w=740&q=80" alt="Google" class="google-logo">
+  Continue with Google
+</button>
+
+
+
+  <!-- 👇 COMPLETE PROFILE INSIDE -->
+  <div id="complete-profile" style="display:none" class="mt-4 space-y-2">
+    <h2 class="text-xl font-bold">Complete Your Profile</h2>
+    <input id="profile-name" placeholder="Full Name" class="input-field">
+    <input id="profile-class" placeholder="Class / Grade" class="input-field">
+    <input id="profile-school" placeholder="School" class="input-field">
+    <button onclick="saveProfile()" class="liquid-btn w-full">Save</button>
+  </div>
+
+</div>`;
+document.getElementById('login-form').onsubmit = async e=>{
+  e.preventDefault();
+  const f = e.target;
+  try{
+    const cred = await signInWithEmailAndPassword(auth,f.email.value,f.password.value);
+    currentUser = cred.user;       // ✅ update currentUser
+    renderHeader();                // ✅ update header buttons
+    renderHome();                  // ✅ redirect to Home
+  }catch(err){ 
+    document.getElementById('login-error').textContent = err.message; 
+  }
+};
+
 
   document.getElementById("google-login").onclick = async () => {
-    await signInWithRedirect(auth, googleProvider);
-  };
+  try {
+    const cred = await signInWithEmailAndPassword(auth,f.email.value,f.password.value);
+    const user = result.user;
 
-  async function handleUser(user) {
-    if (!user) return;
-
+    // check if user profile exists in Firestore
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
     if (snap.exists()) {
+      // User already exists → go to dashboard/home
       currentUser = user;
-      renderHeader();
       renderHome();
     } else {
-      // New user → complete profile
+      // New user → open complete profile form
+      renderLogin(); // ensure login page is rendered with complete-profile div
       const completeProfile = document.getElementById("complete-profile");
+      const loginForm = document.getElementById("login-form");
+
+      if (!completeProfile || !loginForm) return;
+
       loginForm.style.display = "none";
       completeProfile.style.display = "block";
 
-      const displayName = user.displayName ? user.displayName.split(" ") : ["", ""];
-
+      // prefill name and email from Google
+      const displayName = user.displayName ? user.displayName.split(" ") : ["",""];
       completeProfile.innerHTML = `
         <h2 class="text-xl font-bold">Complete Your Profile</h2>
-        <input id="profile-firstName" class="input-field" placeholder="First Name" value="${displayName[0]}">
-        <input id="profile-lastName" class="input-field" placeholder="Last Name" value="${displayName[1]}">
-        <input id="profile-email" class="input-field" value="${user.email}" readonly>
-        <label for="profile-birthday">Birthday</label>
-        <input id="profile-birthday" type="date" class="input-field">
-        <label for="profile-phone">Phone</label>
+        <input id="profile-firstName" placeholder="First Name" class="input-field" value="${displayName[0]}">
+        <input id="profile-lastName" placeholder="Last Name" class="input-field" value="${displayName[1]}">
+        <input id="profile-email" placeholder="Email" class="input-field" value="${user.email}" readonly>
+        <input id="profile-birthday" type="date" class="input-field" placeholder="Birthday">
         <input id="profile-phone" placeholder="Phone" class="input-field">
-        <label for="profile-school">School</label>
         <input id="profile-school" placeholder="School" class="input-field">
-        <label for="profile-examYear">Exam Year</label>
         <select id="profile-examYear" class="input-field">
           <option>2026 A/L</option>
           <option>2027 A/L</option>
@@ -272,6 +286,7 @@ async function renderLogin() {
         <button id="save-profile-btn" class="liquid-btn w-full">Save</button>
       `;
 
+      // attach saveProfile
       document.getElementById("save-profile-btn").onclick = async () => {
         const data = {
           firstName: document.getElementById("profile-firstName").value.trim(),
@@ -283,32 +298,21 @@ async function renderLogin() {
           examYear: document.getElementById("profile-examYear").value,
           createdAt: new Date().toISOString()
         };
+
         await setDoc(doc(db, "users", user.uid), data);
         await updateProfile(user, { displayName: `${data.firstName} ${data.lastName}` });
+
+        alert("Profile saved!");
         currentUser = user;
-        renderHeader();
         renderHome();
       };
     }
-  }
-
-  // IMPORTANT: Await redirect result first
-  try {
-    const result = await getRedirectResult(auth);
-    if (result?.user) {
-      await handleUser(result.user);
-      return; // stop further onAuthStateChanged handling
-    }
   } catch (err) {
-    console.error(err);
+    alert(err.message);
   }
-
-  // Fallback for already logged-in users
-  onAuthStateChanged(auth, async user => {
-    if (!user) return;
-    await handleUser(user);
-  });
+};
 }
+
 async function saveProfile() {
   const user = auth.currentUser;
   if (!user) return;
@@ -331,6 +335,8 @@ async function saveProfile() {
   renderHome();
 }
 
+// Button attach කරන්න
+document.getElementById("save-profile-btn").onclick = saveProfile;
 
 
 
