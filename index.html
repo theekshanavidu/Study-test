@@ -197,26 +197,27 @@ function renderRegister(){
 // ---------- Login ----------
 async function renderLogin() {
   appContainer.innerHTML = `
-  <div id="auth-section" class="bg-slate-800 p-6 rounded-xl w-full max-w-md mx-auto space-y-3">
-    <h2 class="text-2xl font-bold">Login</h2>
-    <form id="login-form" class="flex flex-col gap-2">
-      <input type="email" name="email" placeholder="Email" class="input-field" required>
-      <input type="password" name="password" placeholder="Password" class="input-field" required>
-      <div class="flex justify-between items-center mt-2">
-        <button type="submit" class="liquid-btn">Login</button>
-        <button type="button" id="forgot-pass" class="text-sm text-slate-300">Forgot?</button>
-      </div>
-      <div id="login-error" class="text-red-400"></div>
-    </form>
-    <button id="google-login" class="google-btn w-full">
-      <img src="https://img.freepik.com/premium-vector/google-logo-icon-transparent-background_1273375-1570.jpg" class="google-logo">
-      Continue with Google
-    </button>
-    <div id="complete-profile" style="display:none" class="mt-4 space-y-2"></div>
-  </div>`;
+    <div id="auth-section" class="bg-slate-800 p-6 rounded-xl w-full max-w-md mx-auto space-y-3">
+      <h2 class="text-2xl font-bold">Login</h2>
+      <form id="login-form" class="flex flex-col gap-2">
+        <input type="email" name="email" placeholder="Email" class="input-field" required>
+        <input type="password" name="password" placeholder="Password" class="input-field" required>
+        <div class="flex justify-between items-center mt-2">
+          <button type="submit" class="liquid-btn">Login</button>
+          <button type="button" id="forgot-pass" class="text-sm text-slate-300">Forgot?</button>
+        </div>
+        <div id="login-error" class="text-red-400"></div>
+      </form>
+      <button id="google-login" class="google-btn w-full">
+        <img src="https://img.freepik.com/premium-vector/google-logo-icon-transparent-background_1273375-1570.jpg" class="google-logo">
+        Continue with Google
+      </button>
+      <div id="complete-profile" style="display:none" class="mt-4 space-y-2"></div>
+    </div>`;
 
-  // Email login
-  document.getElementById('login-form').onsubmit = async e => {
+  const loginForm = document.getElementById('login-form');
+
+  loginForm.onsubmit = async e => {
     e.preventDefault();
     const f = e.target;
     try {
@@ -229,12 +230,10 @@ async function renderLogin() {
     }
   };
 
-  // Google login
   document.getElementById("google-login").onclick = async () => {
     await signInWithRedirect(auth, googleProvider);
   };
 
-  // Shared function to handle logged-in user
   async function handleUser(user) {
     if (!user) return;
 
@@ -248,7 +247,6 @@ async function renderLogin() {
     } else {
       // New user → complete profile
       const completeProfile = document.getElementById("complete-profile");
-      const loginForm = document.getElementById("login-form");
       loginForm.style.display = "none";
       completeProfile.style.display = "block";
 
@@ -294,21 +292,24 @@ async function renderLogin() {
     }
   }
 
-  // Handle redirect result properly
+  // IMPORTANT: Await redirect result first
   try {
     const result = await getRedirectResult(auth);
-    if (result && result.user) {
+    if (result?.user) {
       await handleUser(result.user);
+      return; // stop further onAuthStateChanged handling
     }
   } catch (err) {
     console.error(err);
   }
 
-  // Fallback: onAuthStateChanged for already logged-in users
+  // Fallback for already logged-in users
   onAuthStateChanged(auth, async user => {
+    if (!user) return;
     await handleUser(user);
   });
 }
+
 
 
 
