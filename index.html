@@ -309,6 +309,27 @@ async function renderLogin() {
     await handleUser(user);
   });
 }
+async function saveProfile() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const data = {
+    firstName: document.getElementById("profile-firstName").value.trim(),
+    lastName: document.getElementById("profile-lastName").value.trim(),
+    email: document.getElementById("profile-email").value.trim(),
+    birthday: document.getElementById("profile-birthday").value.trim(),
+    phone: document.getElementById("profile-phone").value.trim(),
+    school: document.getElementById("profile-school").value.trim(),
+    examYear: document.getElementById("profile-examYear").value.trim(),
+    createdAt: new Date().toISOString()
+  };
+
+  await setDoc(doc(db, "users", user.uid), data);
+  await updateProfile(user, { displayName: `${data.firstName} ${data.lastName}` });
+
+  alert("Profile saved!");
+  renderHome();
+}
 
 
 
