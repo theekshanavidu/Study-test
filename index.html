@@ -195,7 +195,7 @@ function renderRegister(){
 
 
 // ---------- Login ----------
-function renderLogin() {
+async function renderLogin() {
   appContainer.innerHTML = `
   <div id="auth-section" class="bg-slate-800 p-6 rounded-xl w-full max-w-md mx-auto space-y-3">
     <h2 class="text-2xl font-bold">Login</h2>
@@ -215,7 +215,7 @@ function renderLogin() {
     <div id="complete-profile" style="display:none" class="mt-4 space-y-2"></div>
   </div>`;
 
-  // ---------- Email Login ----------
+  // Email login
   document.getElementById('login-form').onsubmit = async e => {
     e.preventDefault();
     const f = e.target;
@@ -229,44 +229,15 @@ function renderLogin() {
     }
   };
 
-  // ---------- Forget Password ----------
-  document.getElementById("forgot-pass").onclick = async () => {
-    const email = prompt("Enter your email to reset password:");
-    if (!email) return;
-    try {
-      await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent!");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  // ---------- Google Login ----------
+  // Google login
   document.getElementById("google-login").onclick = async () => {
     await signInWithRedirect(auth, googleProvider);
   };
 
-  // ---------- Handle Google redirect ----------
-  getRedirectResult(auth).then(async result => {
-    if (result?.user) {
-      const user = result.user;
-      const ref = doc(db, "users", user.uid);
-      const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        currentUser = user;
-        renderHeader();
-        renderHome();
-      } else {
-        // New user → complete profile
-        showCompleteProfileForm(user);
-      }
-    }
-  }).catch(err => alert(err.message));
-
-  // ---------- onAuthStateChanged ----------
-  onAuthStateChanged(auth, async user => {
+  // Shared function to handle logged-in user
+  async function handleUser(user) {
     if (!user) return;
+
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
@@ -276,57 +247,67 @@ function renderLogin() {
       renderHome();
     } else {
       // New user → complete profile
-      showCompleteProfileForm(user);
-    }
-  });
+      const completeProfile = document.getElementById("complete-profile");
+      const loginForm = document.getElementById("login-form");
+      loginForm.style.display = "none";
+      completeProfile.style.display = "block";
 
-  // ---------- Show complete profile ----------
-  function showCompleteProfileForm(user) {
-    const completeProfile = document.getElementById("complete-profile");
-    const loginForm = document.getElementById("login-form");
-    loginForm.style.display = "none";
-    completeProfile.style.display = "block";
+      const displayName = user.displayName ? user.displayName.split(" ") : ["", ""];
 
-    const displayName = user.displayName ? user.displayName.split(" ") : ["", ""];
+      completeProfile.innerHTML = `
+        <h2 class="text-xl font-bold">Complete Your Profile</h2>
+        <input id="profile-firstName" class="input-field" placeholder="First Name" value="${displayName[0]}">
+        <input id="profile-lastName" class="input-field" placeholder="Last Name" value="${displayName[1]}">
+        <input id="profile-email" class="input-field" value="${user.email}" readonly>
+        <label for="profile-birthday">Birthday</label>
+        <input id="profile-birthday" type="date" class="input-field">
+        <label for="profile-phone">Phone</label>
+        <input id="profile-phone" placeholder="Phone" class="input-field">
+        <label for="profile-school">School</label>
+        <input id="profile-school" placeholder="School" class="input-field">
+        <label for="profile-examYear">Exam Year</label>
+        <select id="profile-examYear" class="input-field">
+          <option>2026 A/L</option>
+          <option>2027 A/L</option>
+          <option>2028 A/L</option>
+        </select>
+        <button id="save-profile-btn" class="liquid-btn w-full">Save</button>
+      `;
 
-    completeProfile.innerHTML = `
-      <h2 class="text-xl font-bold">Complete Your Profile</h2>
-      <input id="profile-firstName" class="input-field" placeholder="First Name" value="${displayName[0]}">
-      <input id="profile-lastName" class="input-field" placeholder="Last Name" value="${displayName[1]}">
-      <input id="profile-email" class="input-field" value="${user.email}" readonly>
-      <label for="profile-birthday">Birthday</label>
-      <input id="profile-birthday" type="date" class="input-field">
-      <label for="profile-phone">Phone</label>
-      <input id="profile-phone" placeholder="Phone" class="input-field">
-      <label for="profile-school">School</label>
-      <input id="profile-school" placeholder="School" class="input-field">
-      <label for="profile-examYear">Exam Year</label>
-      <select id="profile-examYear" class="input-field">
-        <option>2026 A/L</option>
-        <option>2027 A/L</option>
-        <option>2028 A/L</option>
-      </select>
-      <button id="save-profile-btn" class="liquid-btn w-full">Save</button>
-    `;
-
-    document.getElementById("save-profile-btn").onclick = async () => {
-      const data = {
-        firstName: document.getElementById("profile-firstName").value.trim(),
-        lastName: document.getElementById("profile-lastName").value.trim(),
-        email: user.email,
-        birthday: document.getElementById("profile-birthday").value,
-        phone: document.getElementById("profile-phone").value.trim(),
-        school: document.getElementById("profile-school").value.trim(),
-        examYear: document.getElementById("profile-examYear").value,
-        createdAt: new Date().toISOString()
+      document.getElementById("save-profile-btn").onclick = async () => {
+        const data = {
+          firstName: document.getElementById("profile-firstName").value.trim(),
+          lastName: document.getElementById("profile-lastName").value.trim(),
+          email: user.email,
+          birthday: document.getElementById("profile-birthday").value,
+          phone: document.getElementById("profile-phone").value.trim(),
+          school: document.getElementById("profile-school").value.trim(),
+          examYear: document.getElementById("profile-examYear").value,
+          createdAt: new Date().toISOString()
+        };
+        await setDoc(doc(db, "users", user.uid), data);
+        await updateProfile(user, { displayName: `${data.firstName} ${data.lastName}` });
+        currentUser = user;
+        renderHeader();
+        renderHome();
       };
-      await setDoc(doc(db, "users", user.uid), data);
-      await updateProfile(user, { displayName: `${data.firstName} ${data.lastName}` });
-      currentUser = user;
-      renderHeader();
-      renderHome();
-    };
+    }
   }
+
+  // Handle redirect result properly
+  try {
+    const result = await getRedirectResult(auth);
+    if (result && result.user) {
+      await handleUser(result.user);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  // Fallback: onAuthStateChanged for already logged-in users
+  onAuthStateChanged(auth, async user => {
+    await handleUser(user);
+  });
 }
 
 
