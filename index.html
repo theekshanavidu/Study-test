@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -272,12 +273,24 @@ document.getElementById('login-form').onsubmit = async e=>{
       const displayName = user.displayName ? user.displayName.split(" ") : ["",""];
       completeProfile.innerHTML = `
         <h2 class="text-xl font-bold">Complete Your Profile</h2>
+	<label for="profile-firstName">First Name</label>
         <input id="profile-firstName" placeholder="First Name" class="input-field" value="${displayName[0]}">
+
+ 	<label for="profile-lastName">Last Name</label>
         <input id="profile-lastName" placeholder="Last Name" class="input-field" value="${displayName[1]}">
+
+	<label for="profile-email">Email</label>
         <input id="profile-email" placeholder="Email" class="input-field" value="${user.email}" readonly>
+
+ 	<label for="profile-birthday">Birthday</label>
         <input id="profile-birthday" type="date" class="input-field" placeholder="Birthday">
+
+ 	<label for="profile-phone">Phone</label>
         <input id="profile-phone" placeholder="Phone" class="input-field">
+
+	<label for="profile-school">School</label>
         <input id="profile-school" placeholder="School" class="input-field">
+
         <select id="profile-examYear" class="input-field">
           <option>2026 A/L</option>
           <option>2027 A/L</option>
@@ -1261,6 +1274,7 @@ body{background:black;color:white;min-height:100vh;}
 
 </body>
 </html>
+
 
 
 
