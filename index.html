@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -467,27 +468,75 @@ async function renderCharts(userId = currentUser.uid){
       type:'line',
       data:{
         labels:Array.from({length:7},(_,i)=>{const d=new Date(); d.setDate(today.getDate()-6+i); return d.toISOString().slice(5,10);}),
-        datasets:[{label:'Hours', data:weekly, borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.3)', fill:true}]
+        datasets:[{label:'Hours', data:weekly, borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.3)', fill:true , tension: 0.2}]
       },
-      options:{responsive:true, plugins:{legend:{labels:{color:'#fff'}}}, scales:{x:{ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}}}}
+      options: {
+  responsive: true,
+  plugins: {
+    legend: { labels: { color: '#fff' } }
+  },
+  scales: {
+    x: {
+      ticks: { color: '#fff' }
+    },
+    y: {
+      ticks: { color: '#fff' },
+      beginAtZero: true   // ✅ THIS LINE
+    }
+  }
+}
     });
   }
+
 
   // ---------- Monthly chart ----------
   const ctxM = document.getElementById('monthly-chart');
   if(ctxM){
     const ctx = ctxM.getContext('2d');
     window.monthlyChart?.destroy();
+
+// Sort months
+  const months = Object.keys(monthly).sort((a, b) => {
+    const [yA, mA] = a.split("-").map(Number);
+    const [yB, mB] = b.split("-").map(Number);
+    return yA === yB ? mA - mB : yA - yB;
+  });
+
+  // Get values
+  const values = months.map(m => monthly[m]);
+
+  // Format labels: Jan 2026, Feb 2026 ...
+  const monthLabels = months.map(m => {
+    const [year, month] = m.split("-");
+    return new Date(year, month - 1)
+      .toLocaleString("en", { month: "short", year: "numeric" });
+  });
+
     window.monthlyChart = new Chart(ctx,{
       type:'line',
       data:{
-        labels:months,
-        datasets:[{label:'Hours', data:values, borderColor:'#22d3ee', backgroundColor:'rgba(34,211,238,0.3)', fill:true}]
+        labels:monthLabels,
+        datasets:[{label:'Hours', data:values, borderColor:'#22d3ee', backgroundColor:'rgba(34,211,238,0.3)', fill:true ,  tension: 0.2}]
       },
-      options:{responsive:true, plugins:{legend:{labels:{color:'#fff'}}}, scales:{x:{ticks:{color:'#fff'}}, y:{ticks:{color:'#fff'}}}}
+      options: {
+  responsive: true,
+  plugins: {
+    legend: { labels: { color: '#fff' } }
+  },
+  scales: {
+    x: {
+      ticks: { color: '#fff' }
+    },
+    y: {
+      ticks: { color: '#fff' },
+      beginAtZero: true   // ✅ THIS LINE
+    }
+  }
+}
     });
   }
 }
+
 
 
 // ---------- Profile ----------
@@ -903,7 +952,6 @@ async function openLessonPage(subject, type, day){
   }
 }
 
-
 async function loadLessonContents(lessonId){
   const list = document.getElementById("content-list");
   list.innerHTML = "";
@@ -957,6 +1005,32 @@ async function loadLessonContents(lessonId){
   });
 }
 
+
+	
+
+
+async function addContent(lessonId){
+  const text = document.getElementById("content-text").value.trim();
+  const link = document.getElementById("content-link").value.trim();
+  if(!text || !link) return alert("Fill all fields");
+
+  const snap = await getDocs(
+    query(collection(db,"lessonContents"), where("lessonId","==",lessonId))
+  );
+
+  await addDoc(collection(db,"lessonContents"),{
+    lessonId,
+    text,
+    link,
+    order: snap.size + 1,
+    createdAt: Date.now()
+  });
+
+  document.getElementById("content-text").value = "";
+  document.getElementById("content-link").value = "";
+
+  await loadLessonContents(lessonId); // 🔹 make sure to await
+}
 
 
 
@@ -1111,7 +1185,7 @@ async function renderAdminUserDetails(uid){
   if(window.adminMonthlyChart) window.adminMonthlyChart.destroy();
 
   // ---------- Create Weekly Chart ----------
-  const ctxW = document.getElementById('admin-weekly-chart').getContext('2d');
+   const ctxW = document.getElementById('admin-weekly-chart').getContext('2d');
   window.adminWeeklyChart = new Chart(ctxW, {
     type: 'line',
     data: {
@@ -1121,35 +1195,75 @@ async function renderAdminUserDetails(uid){
         data: weeklyData,
         borderColor: '#8b5cf6',
         backgroundColor: 'rgba(139,92,246,0.3)',
-        fill: true
+        fill: true,
+                tension: 0.2
       }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { labels: { color: '#fff' } } },
-      scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } }
+  options: {
+  responsive: true,
+  plugins: {
+    legend: { labels: { color: '#fff' } }
+  },
+  scales: {
+    x: {
+      ticks: { color: '#fff' }
+    },
+    y: {
+      ticks: { color: '#fff' },
+      beginAtZero: true   // ✅ THIS LINE
     }
+  }
+}
   });
 
+
   // ---------- Create Monthly Chart ----------
-  const ctxM = document.getElementById('admin-monthly-chart').getContext('2d');
-  window.adminMonthlyChart = new Chart(ctxM, {
-    type: 'line',
-    data: {
-      labels: Object.keys(monthly),
-      datasets: [{
-        label: 'Hours',
-        data: Object.values(monthly),
-        borderColor: '#22d3ee',
-        backgroundColor: 'rgba(34,211,238,0.3)',
-        fill: true
-      }]
-    },
+   const ctxM = document.getElementById('admin-monthly-chart').getContext('2d');
+  // Sort months (YYYY-MM) properly
+const sortedMonths = Object.keys(monthly).sort((a, b) => {
+  const [yA, mA] = a.split("-").map(Number);
+  const [yB, mB] = b.split("-").map(Number);
+  return yA === yB ? mA - mB : yA - yB;
+});
+
+// Map values to sorted months
+const monthlyValues = sortedMonths.map(m => monthly[m]);
+
+// Format labels as "Jan 2026", "Feb 2026", etc.
+const monthLabels = sortedMonths.map(m => {
+  const [year, month] = m.split("-");
+  return new Date(year, month - 1).toLocaleString("en", { month: "short", year: "numeric" });
+});
+
+// Create chart
+window.adminMonthlyChart = new Chart(ctxM, {
+  type: 'line',
+  data: {
+    labels: monthLabels,
+    datasets: [{
+      label: 'Hours',
+      data: monthlyValues,
+      borderColor: '#22d3ee',
+      backgroundColor: 'rgba(34,211,238,0.3)',
+      fill: true,
+      tension: 0.2
+    }]
+  },
     options: {
-      responsive: true,
-      plugins: { legend: { labels: { color: '#fff' } } },
-      scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } }
+  responsive: true,
+  plugins: {
+    legend: { labels: { color: '#fff' } }
+  },
+  scales: {
+    x: {
+      ticks: { color: '#fff' }
+    },
+    y: {
+      ticks: { color: '#fff' },
+      beginAtZero: true   // ✅ THIS LINE
     }
+  }
+}
   });
 }
 
@@ -1267,6 +1381,7 @@ body{background:black;color:white;min-height:100vh;}
 
 </body>
 </html>
+
 
 
 
