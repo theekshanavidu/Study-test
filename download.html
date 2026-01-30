@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Your File - Please Wait</title>
+    <title>Preparing Your Link...</title>
     <style>
-        body { font-family: 'Arial', sans-serif; margin: 0; background-color: #f0f2f5; text-align: center; }
-        .main-container { max-width: 900px; margin: auto; padding: 10px; }
-        .ad-row { display: flex; justify-content: center; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
-        .timer-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin: 20px 0; }
-        .timer { font-size: 40px; color: #ff4757; font-weight: bold; }
-        .btn { display: none; padding: 18px 50px; background: #2ed573; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 22px; cursor: pointer; border: none; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        body { font-family: 'Arial', sans-serif; margin: 0; background-color: #e9ecef; text-align: center; }
+        .ad-container { width: 100%; display: flex; justify-content: center; margin: 10px 0; overflow: hidden; }
+        .main-content { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .timer-text { font-size: 50px; color: #d63031; font-weight: bold; margin: 15px 0; }
+        .btn { display: none; padding: 20px 60px; background: #00b894; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 24px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,184,148,0.4); }
         
-        /* Sidebars for Large Screens */
-        .sidebar { position: fixed; top: 100px; display: none; }
-        @media (min-width: 1200px) { .sidebar { display: block; } .left { left: 10px; } .right { right: 10px; } }
+        /* Sidebars */
+        .sidebar { position: fixed; top: 80px; width: 160px; display: none; }
+        @media (min-width: 1200px) { .sidebar { display: block; } .left { left: 5px; } .right { right: 5px; } }
     </style>
 </head>
 <body>
 
-    <div class="ad-row">
+    <div class="ad-container">
         <script type="text/javascript">
             atOptions = { 'key' : '629afdc60f664ca8c5e67d97f540736f', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
         </script>
@@ -34,46 +32,43 @@
         <script src="https://www.highperformanceformat.com/13f9263225d9c4c4d3995f79cb426571/invoke.js"></script>
     </div>
 
-    <div class="main-container">
+    <div class="main-content">
+        <h2>ඔබේ ගොනුව සූදානම් වෙමින් පවතී...</h2>
         
-        <div class="timer-box">
-            <h2>Your Link is Generating...</h2>
-            <p>Please wait for a few seconds to get the download button.</p>
-            
-            <div class="ad-row">
-                <script type="text/javascript">
-                    atOptions = { 'key' : 'c1fbe57adeea1ade3f7f838a985613f1', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
-                </script>
-                <script src="https://www.highperformanceformat.com/c1fbe57adeea1ade3f7f838a985613f1/invoke.js"></script>
-            </div>
-
-            <div class="timer" id="seconds">10</div>
-            <p>ගොනුව ලබා ගැනීමට තත්පර 10ක් රැඳී සිටින්න.</p>
-
-            <div class="ad-row">
-                <script type="text/javascript">
-                    atOptions = { 'key' : '1b344390970a850fca49ca94b4b4ff8b', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-                </script>
-                <script src="https://www.highperformanceformat.com/1b344390970a850fca49ca94b4b4ff8b/invoke.js"></script>
-            </div>
-
-            <button id="download-btn" class="btn">DOWNLOAD NOW</button>
-        </div>
-
-        <div class="ad-row">
+        <div class="ad-container">
             <script type="text/javascript">
-                atOptions = { 'key' : '4fc469aabd83b5a300b03cb5766cff1f', 'format' : 'iframe', 'height' : 300, 'width' : 160, 'params' : {} };
+                atOptions = { 'key' : '1b344390970a850fca49ca94b4b4ff8b', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
             </script>
-            <script src="https://www.highperformanceformat.com/4fc469aabd83b5a300b03cb5766cff1f/invoke.js"></script>
+            <script src="https://www.highperformanceformat.com/1b344390970a850fca49ca94b4b4ff8b/invoke.js"></script>
         </div>
 
+        <div class="timer-text" id="seconds">10</div>
+        <p>Please wait for the download button.</p>
+
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = { 'key' : 'c1fbe57adeea1ade3f7f838a985613f1', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+            </script>
+            <script src="https://www.highperformanceformat.com/c1fbe57adeea1ade3f7f838a985613f1/invoke.js"></script>
+        </div>
+
+        <br>
+        <a href="#" id="download-btn" class="btn">DOWNLOAD NOW</a>
+        <br>
+
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = { 'key' : '1b344390970a850fca49ca94b4b4ff8b', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+            </script>
+            <script src="https://www.highperformanceformat.com/1b344390970a850fca49ca94b4b4ff8b/invoke.js"></script>
+        </div>
     </div>
 
-    <div class="ad-row">
+    <div class="ad-container">
         <script type="text/javascript">
-            atOptions = { 'key' : '3aa82e693ea1908408d19cfe6d647225', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+            atOptions = { 'key' : '4fc469aabd83b5a300b03cb5766cff1f', 'format' : 'iframe', 'height' : 300, 'width' : 160, 'params' : {} };
         </script>
-        <script src="https://www.highperformanceformat.com/3aa82e693ea1908408d19cfe6d647225/invoke.js"></script>
+        <script src="https://www.highperformanceformat.com/4fc469aabd83b5a300b03cb5766cff1f/invoke.js"></script>
     </div>
 
     <div class="sidebar right">
@@ -83,14 +78,18 @@
         <script src="https://www.highperformanceformat.com/13f9263225d9c4c4d3995f79cb426571/invoke.js"></script>
     </div>
 
+    <div class="ad-container">
+        <script type="text/javascript">
+            atOptions = { 'key' : '3aa82e693ea1908408d19cfe6d647225', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+        </script>
+        <script src="https://www.highperformanceformat.com/3aa82e693ea1908408d19cfe6d647225/invoke.js"></script>
+    </div>
+
     <script src="https://pl28611491.effectivegatecpm.com/c4/a1/35/c4a135ad813d31a21bac199605c91458.js"></script>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const destination = urlParams.get('url');
-        
-        // *** මෙතනට ඔයාගේ DIRECT LINK එක අනිවාර්යයෙන්ම පේස්ට් කරන්න ***
-        const adsterraDirectLink = "ඔයාගේ_DIRECT_LINK_එක_මෙතනට";
 
         var timeLeft = 10;
         var timerId = setInterval(countdown, 1000);
@@ -100,21 +99,10 @@
                 clearTimeout(timerId);
                 document.getElementById('seconds').style.display = 'none';
                 const btn = document.getElementById('download-btn');
-                btn.style.display = 'inline-block';
-                
-                btn.onclick = function() {
-                    // 1. Direct Link එක අලුත් ටැබ් එකක ඕපන් කරයි
-                    window.open(adsterraDirectLink, '_blank');
-                    
-                    // 2. තත්පරයකට පසු නියම ලින්ක් එකට මේ ටැබ් එකෙන් යවයි
-                    setTimeout(function() {
-                        if(destination) {
-                            window.location.href = destination;
-                        } else {
-                            alert("නියමිත ගොනුව සොයාගත නොහැක.");
-                        }
-                    }, 1000);
-                };
+                if(destination) {
+                    btn.href = destination;
+                    btn.style.display = 'inline-block';
+                }
             } else {
                 document.getElementById('seconds').innerHTML = timeLeft;
                 timeLeft--;
