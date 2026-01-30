@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloading Your File...</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .timer { font-size: 32px; color: #e74c3c; font-weight: bold; margin: 20px 0; }
+        .btn { display: none; padding: 15px 40px; background: #27ae60; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
+        .btn:hover { background: #219150; transform: translateY(-2px); }
+        .ad-slot { margin: 15px 0; display: flex; justify-content: center; overflow: hidden; }
+        
+        /* Sidebars for Desktop */
+        .sidebar-left { position: fixed; left: 10px; top: 100px; display: none; }
+        .sidebar-right { position: fixed; right: 10px; top: 100px; display: none; }
+
+        @media (min-width: 1200px) {
+            .sidebar-left, .sidebar-right { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ad-slot">
+        <script type="text/javascript">
+            atOptions = { 'key' : '629afdc60f664ca8c5e67d97f540736f', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highperformanceformat.com/629afdc60f664ca8c5e67d97f540736f/invoke.js"></script>
+    </div>
+
+    <div class="sidebar-left">
+        <script type="text/javascript">
+            atOptions = { 'key' : '13f9263225d9c4c4d3995f79cb426571', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
+        </script>
+        <script src="https://www.highperformanceformat.com/13f9263225d9c4c4d3995f79cb426571/invoke.js"></script>
+    </div>
+    <div class="sidebar-right">
+        <script type="text/javascript">
+            atOptions = { 'key' : '4fc469aabd83b5a300b03cb5766cff1f', 'format' : 'iframe', 'height' : 300, 'width' : 160, 'params' : {} };
+        </script>
+        <script src="https://www.highperformanceformat.com/4fc469aabd83b5a300b03cb5766cff1f/invoke.js"></script>
+    </div>
+
+    <div class="container">
+        <h2>ඔබේ ගොනුව සූදානම් වෙමින් පවතී...</h2>
+        <p>ගොනුව බාගත කිරීමට තත්පර කිහිපයක් රැඳී සිටින්න.</p>
+
+        <div class="ad-slot">
+            <script type="text/javascript">
+                atOptions = { 'key' : 'c1fbe57adeea1ade3f7f838a985613f1', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+            </script>
+            <script src="https://www.highperformanceformat.com/c1fbe57adeea1ade3f7f838a985613f1/invoke.js"></script>
+        </div>
+
+        <div class="timer" id="seconds">15</div>
+
+        <div class="ad-slot">
+            <script type="text/javascript">
+                atOptions = { 'key' : '1b344390970a850fca49ca94b4b4ff8b', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+            </script>
+            <script src="https://www.highperformanceformat.com/1b344390970a850fca49ca94b4b4ff8b/invoke.js"></script>
+        </div>
+
+        <br>
+        <a href="#" id="download-btn" class="btn">Download Now</a>
+    </div>
+
+    <div class="ad-slot">
+        <script type="text/javascript">
+            atOptions = { 'key' : '3aa82e693ea1908408d19cfe6d647225', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+        </script>
+        <script src="https://www.highperformanceformat.com/3aa82e693ea1908408d19cfe6d647225/invoke.js"></script>
+    </div>
+
+    <script src="https://pl28611491.effectivegatecpm.com/c4/a1/35/c4a135ad813d31a21bac199605c91458.js"></script>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const destination = urlParams.get('url');
+
+        var timeLeft = 15;
+        var timerId = setInterval(countdown, 1000);
+
+        function countdown() {
+            if (timeLeft <= 0) {
+                clearTimeout(timerId);
+                document.getElementById('seconds').innerHTML = "ඔබේ ලින්ක් එක සූදානම්!";
+                const btn = document.getElementById('download-btn');
+                if(destination) {
+                    btn.href = destination;
+                    btn.style.display = 'inline-block';
+                }
+            } else {
+                document.getElementById('seconds').innerHTML = timeLeft + " seconds remaining...";
+                timeLeft--;
+            }
+        }
+    </script>
+</body>
+</html>
